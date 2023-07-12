@@ -35,54 +35,31 @@ let currentQuestion = 0;
 let score = 0;
 let quizOver = false;
 
-// const showQuestion = () => {
-//     const details = quizArray[currentQuestion];
-//     questionBox.textContent = details.question;
-
-//     choicesBox.textContent = "";
-//     for (let i = 0; i < details.options.length; i++) {
-//         const currentOption = details.options[i];
-//         const choiceDiv = document.createElement('div');
-//         choiceDiv.textContent = currentOption;
-//         choiceDiv.classList.add('choice');
-//         choicesBox.appendChild(choiceDiv);
-
-//         choiceDiv.addEventListener('click', () => {
-//             if (choiceDiv.classList.add('selected')) {
-//                 choiceDiv.classList.remove('selected');
-//             }
-//             else {
-//                 choiceDiv.classList.add('selected');
-//             }
-//         });
-//     }
-// }
-
 const showQuestion = () => {
     const details = quizArray[currentQuestion];
     questionBox.textContent = details.question;
-  
+
     choicesBox.textContent = "";
     for (let i = 0; i < details.options.length; i++) {
-      const currentOption = details.options[i];
-      const choiceDiv = document.createElement('div');
-      choiceDiv.textContent = currentOption;
-      choiceDiv.classList.add('choice');
-      choicesBox.appendChild(choiceDiv);
-  
-      choiceDiv.addEventListener('click', () => {
-        // Remove 'selected' class from all options
-        const selectedOptions = choicesBox.querySelectorAll('.selected');
-        selectedOptions.forEach((option) => {
-          option.classList.remove('selected');
+        const currentOption = details.options[i];
+        const choiceDiv = document.createElement('div');
+        choiceDiv.textContent = currentOption;
+        choiceDiv.classList.add('choice');
+        choicesBox.appendChild(choiceDiv);
+
+        choiceDiv.addEventListener('click', () => {
+            // Remove 'selected' class from all options
+            const selectedOptions = choicesBox.querySelectorAll('.selected');
+            selectedOptions.forEach((option) => {
+                option.classList.remove('selected');
+            });
+
+            // Add 'selected' class to the clicked option
+            choiceDiv.classList.add('selected');
         });
-  
-        // Add 'selected' class to the clicked option
-        choiceDiv.classList.add('selected');
-      });
     }
-  };
-  
+};
+
 
 const check = () => {
     const selectedOption = document.querySelector('.choice.selected');
@@ -90,7 +67,7 @@ const check = () => {
         score++;
     }
     else {
-           }
+    }
     currentQuestion++;
     if (currentQuestion < quizArray.length) {
         showQuestion();
@@ -101,49 +78,39 @@ const check = () => {
 }
 
 const showScore = () => {
-    questionBox.textContent ="";
+    questionBox.textContent = "";
     choicesBox.textContent = "";
     scoreCard.textContent = `you scored  ${score} out of ${quizArray.length}!`;
     alertDisplay("You have completed your Quiz.");
-    nextBtn.textContent = "Reload";   
+    nextBtn.textContent = "Reload";
     quizOver = true;
-   
+
 }
 
 const alertDisplay = (message) => {
     alert.style.display = "block";
     alert.textContent = message;
-    setTimeout(()=>{
+    setTimeout(() => {
         alert.style.display = "none";
     }, 2000);
 }
 showQuestion();
 
-// const shuffleQuestion = () => {
-//     for(let i=quizArray.length-1; i>0; i--){
-//         const j = Math.random() * i+1)
-//     }
-// }
-
-const shuffleQuestions = () =>{
-    for(let i=quizArray.length-1; i>0; i--){
-        const j = Math.floor(Math.random() * (i+1));
-        [quizArray[i], quizArray[j]] = [quizArray[j], quizArray[i]];
-    }
+const shuffleQuestions = () => {
+    quizArray.sort(() => Math.random() - 0.5);
     currentQuestion = 0;
-    //shuffleQuestions();
     showQuestion();
-}
+};
 
 
 nextBtn.addEventListener('click', () => {
     const selectedOption = document.querySelector('.choice.selected');
-    if(!selectedOption && nextBtn.textContent === "Next") {
+    if (!selectedOption && nextBtn.textContent === "Next") {
         alertDisplay("Select your answer");
-          return;
+        return;
     }
 
-    if(quizOver){
+    if (quizOver) {
         // currentQuestion = 0;
         nextBtn.textContent = "Next";
         scoreCard.textContent = "";
@@ -151,10 +118,10 @@ nextBtn.addEventListener('click', () => {
         showQuestion();
         shuffleQuestions();
         quizOver = false;
-        score =0;
+        score = 0;
     }
     else {
-       check();
+        check();
     }
-   
+
 });
