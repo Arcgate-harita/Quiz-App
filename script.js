@@ -41,6 +41,19 @@ let currentQuestion = 0;
 let score = 0;
 let quizOver = false; 0
 
+let storedScore = localStorage.getItem('score');
+if (storedScore !== null) {
+  score = parseInt(storedScore);
+}
+
+let storedCurrentQuestionIndex = localStorage.getItem('currentQuestionIndex');
+if (storedCurrentQuestionIndex !== null) {
+  currentQuestion = parseInt(storedCurrentQuestionIndex);
+}
+
+let storedSelectedOptions = localStorage.getItem('selectedOptions');
+let selectedOptionsArray = storedSelectedOptions ? JSON.parse(storedSelectedOptions) : [];
+
 
 const showQuestion = () => {
   const details = quizArray[currentQuestion];
@@ -52,10 +65,13 @@ const showQuestion = () => {
     choiceDiv.textContent = currentOption;
     choiceDiv.classList.add('choice');
     choicesBox.appendChild(choiceDiv);
-    //selected option
-    if (i === details.selectedOptionIndex) {
+
+
+    // Check if there is a stored selected option for this question
+    if (selectedOptionsArray[currentQuestion] !== undefined && selectedOptionsArray[currentQuestion] === i) {
       choiceDiv.classList.add('selected');
     }
+
     choiceDiv.addEventListener('click', () => {
       // Remove 'selected' class from all options
       const selectedOptions = choicesBox.querySelectorAll('.selected');
@@ -65,11 +81,17 @@ const showQuestion = () => {
       });
       // Add 'selected' class to the clicked option
       choiceDiv.classList.add('selected');
-      details.selectedOptionIndex = i;
+      //details.selectedOptionIndex = i;
+
+      // Store the selected option index in the selectedOptionsArray
+      selectedOptionsArray[currentQuestion] = i;
+      localStorage.setItem('selectedOptions', JSON.stringify(selectedOptionsArray));
+
     });
     reloadBtn.style.display = 'none';
   }
-
+  // Store the current question index in localStorage
+  localStorage.setItem('currentQuestionIndex', currentQuestion);
 };
 
 
@@ -79,7 +101,6 @@ nextBtn.addEventListener('click', () => {
     alertDisplay("Select your answer");
     return;
   }
-
   if (quizOver) {
     nextBtn.textContent = "Next";
     scoreCard.textContent = "";
@@ -92,7 +113,6 @@ nextBtn.addEventListener('click', () => {
   else {
     check();
   }
-
 });
 
 
@@ -117,6 +137,8 @@ const check = () => {
 const showPreviousQuestion = () => {
   currentQuestion--;
   showQuestion();
+  // Store the current question index in localStorage
+  localStorage.setItem('currentQuestionIndex', currentQuestion);
 };
 
 backBtn.addEventListener('click', () => {
@@ -139,7 +161,10 @@ const showScore = () => {
   const email = localStorage.getItem('email');
   userDataArray(username, email, score);
   displayUserData();
-
+  // Store the current page state as 'scoreCard'
+  storePageState('scoreCard');
+  // Store the score in localStorage
+  localStorage.setItem('score', score);
 }
 
 const alertDisplay = (message) => {
@@ -166,16 +191,29 @@ const startQuiz = () => {
   startScreen.style.display = 'none';
   quizScreen.style.display = 'block';
 
+  selectedOptionsArray = [];
+  localStorage.removeItem('selectedOptions');
+
   // Display username on the quiz screen
   const usernames = localStorage.getItem('username');
   usernameDisplay.textContent = `Username: ${usernames}`;
 
+  //const storedCurrentQuestionIndex = localStorage.getItem('currentQuestionIndex');
+  localStorage.getItem('currentQuestionIndex');
   // Reset quiz state and clear the score
   currentQuestion = 0;
   score = 0;
   quizOver = false;
   scoreText.textContent = '';
   showQuestion();
+
+  // Store the current page state as 'quizScreen'
+  storePageState('quizScreen');
+
+  // Store the username in localStorage
+  const username = localStorage.getItem('username');
+  localStorage.setItem('username', usernameInput.value.trim());
+
 };
 
 startQuizButton.addEventListener('click', () => {
@@ -222,6 +260,8 @@ startQuizButton.addEventListener('click', () => {
     // Start the quiz for a new user
     startQuiz();
   }
+
+
 
 });
 
@@ -335,6 +375,9 @@ const reloadQuiz = () => {
   // Clear the username and email input fields
   usernameInput.value = '';
   emailInput.value = '';
+  // Clear the stored page state to go back to the login screen
+  localStorage.removeItem('currentPage');
+
 };
 
 // Check if 10 users have completed the quiz
@@ -352,6 +395,8 @@ if (usersArray.length >= 10) {
   if (usersArray.length >= 10) {
     // Reload the page if there are more than 10 users
     location.reload();
+
+
   } else {
     // Hide the score screen
     scoreCard.style.display = 'none';
@@ -404,3 +449,36 @@ const startQuizOrShowScore = () => {
   // Otherwise, start the quiz for a new user
   startQuiz();
 };
+
+const storePageState = (pageName) => {
+  localStorage.setItem('currentPage', pageName);
+};
+
+// Retrieve the stored page state from localStorage
+const storedPage = localStorage.getItem('currentPage');
+
+// Display the appropriate page based on the stored page state
+if (storedPage === 'quizScreen') {
+  startScreen.style.display = 'none';
+  quizScreen.style.display = 'block';
+  showQuestion();
+} else if (storedPage === 'scoreCard') {
+  startScreen.style.display = 'none';
+  quizScreen.style.display = 'block';
+  showScore();
+} else {
+  // If no page state is stored or the stored state is not recognized, display the start screen
+  startScreen.style.display = 'block';
+  quizScreen.style.display = 'none';
+}
+
+
+// Retrieve the stored username from localStorage
+const storedUsername = localStorage.getItem('username');
+
+// Display the username on the quiz screen
+if (storedUsername) {
+  usernameDisplay.textContent = `Username: ${storedUsername}`;
+  usernameDisplay.style.display = 'block';
+}
+
