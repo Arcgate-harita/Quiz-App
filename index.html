@@ -1,0 +1,53 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="style.css">
+    <title>Quiz-app</title>
+</head>
+
+<body>
+    <div class="alert">Alert</div>
+    <div class="container">
+        <div id="start-screen" class="screen">
+            <h1>Welcome to the Quiz App</h1>
+            <div id="user-info">
+                <label for="username">Username:</label>
+                <input type="text" id="username" required>
+                <label for="email">Email:</label>
+                <input type="email" id="email" required>
+            </div>
+            <button id="start-quiz-button">Start Quiz</button>
+            <div id="error-message" class="hidden">Please enter your username and email.</div>
+        </div>
+        <div id="quiz-screen">
+            <h1>Take a Quiz</h1>
+            <div id="username-display"></div>
+            <div class="question"></div>
+            <div class="choices"></div>
+            <button class="backBtn">Back</button>
+            <button class="nextBtn">Next</button>
+
+        </div>
+        <div id="scoreCard">
+            <p id="scoreText"></p>
+            <button id="reloadBtn">Reload</button>
+            <table id="userDataTable">
+                <thead>
+                    <tr>
+                        <th>Username</th>
+                        <th>Email</th>
+                        <th>Score</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+
+</html>
